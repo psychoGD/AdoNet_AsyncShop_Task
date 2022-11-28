@@ -1,0 +1,7 @@
+﻿CREATE TABLE Product(
+[Id] INT PRIMARY KEY IDENTITY(1,1) NOT NULL,
+[Name] NVARCHAR(100) NOT NULL,
+[Price] MONEY NOT NULL,
+CHECK(Name!=' '),
+CHECK(Price!=0),
+)
