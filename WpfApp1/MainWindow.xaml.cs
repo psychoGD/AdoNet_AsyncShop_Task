@@ -31,12 +31,14 @@ namespace WpfApp1
         public MainWindow()
         {
             InitializeComponent();
+            GetDataFromDB();
             this.DataContext = this;
             Products product = new Products();
             product.Pname = "Table";
             product.Pprice = "12";
             //product.Pimg = new BitmapImage(new Uri(@"C:\Users\Huseyn\source\repos\WpfApp1\WpfApp1\images\Table-PNG-File.png"));
             Products.Add(product);
+
         }
 
 
@@ -98,8 +100,7 @@ namespace WpfApp1
             this.MainGrid.Children.Add(addProduct);
 
         }
-
-        private async void Button_Click_1(object sender, RoutedEventArgs e)
+        public async void  GetDataFromDB()
         {
             using (var conn = new SqlConnection())
             {
@@ -107,7 +108,7 @@ namespace WpfApp1
                 conn.Open();
 
                 SqlCommand command = conn.CreateCommand();
-                command.CommandText = "Wait For Delay '00:00:05';SELECT * FROM Product";
+                command.CommandText = "WAITFOR Delay '00:00:05';SELECT * FROM Product";
 
                 var table = new DataTable();
 
@@ -136,13 +137,22 @@ namespace WpfApp1
                             for (int i = 0; i < reader.FieldCount; i++)
                             {
                                 row[i] = await reader.GetFieldValueAsync<Object>(i);
+                                //var test = ;
                             }
+                            var arr = row.ItemArray.ToArray();
+                            Products.Add(new Products { Pname = arr[0].ToString(), Pprice = arr[1].ToString() });
                             table.Rows.Add(row);
+                            
                         }
                     } while (reader.NextResult());
-                    MyGrid.ItemsSource = table.DefaultView;
+
                 }
             }
+        }
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            GetDataFromDB();
+            MyGrid.ItemsSource=Products;
         }
     }
 }
